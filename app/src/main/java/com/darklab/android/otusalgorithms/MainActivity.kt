@@ -46,5 +46,5 @@ class MainActivity : AppCompatActivity() {
         resultTextView?.text = message
     }
 
-    private fun requiredTask(): ITask = TaskString()
+    private fun requiredTask(): ITask = TaskTickets()
 }
