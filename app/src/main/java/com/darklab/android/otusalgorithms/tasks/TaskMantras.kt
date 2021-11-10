@@ -16,10 +16,11 @@ class TaskMantras : ITask {
 
     private fun sayMantra(n: Int): String {
         val stringBuilder = StringBuilder()
+        val currentMantra = mantra(n)
         for (x in 0 until 25) {
             for (y in 0 until 25) {
                 stringBuilder.append(
-                    if (mantra(n)(x, y)) BALL else POINT
+                    if (currentMantra(x, y)) BALL else POINT
                 )
             }
             stringBuilder.append("\n")
