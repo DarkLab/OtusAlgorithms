@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.darklab.android.otusalgorithms.tasks.ITask
+import com.darklab.android.otusalgorithms.tasks.TaskMantras
 import com.darklab.android.otusalgorithms.tasks.TaskString
 import com.darklab.android.otusalgorithms.tasks.TaskTickets
 import com.darklab.android.otusalgorithms.test.Tester
@@ -46,5 +47,5 @@ class MainActivity : AppCompatActivity() {
         resultTextView?.text = message
     }
 
-    private fun requiredTask(): ITask = TaskTickets()
+    private fun requiredTask(): ITask = TaskMantras()
 }
