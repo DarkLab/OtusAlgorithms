@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.darklab.android.otusalgorithms.tasks.ITask
 import com.darklab.android.otusalgorithms.tasks.TaskMantras
+import com.darklab.android.otusalgorithms.tasks.TaskPower
 import com.darklab.android.otusalgorithms.tasks.TaskString
-import com.darklab.android.otusalgorithms.tasks.TaskTickets
 import com.darklab.android.otusalgorithms.test.Tester
 import kotlinx.coroutines.*
 
@@ -39,6 +39,10 @@ class MainActivity : AppCompatActivity() {
             printCurrentState(result)
         }
 
+        playWithMantras()
+    }
+
+    private fun playWithMantras() {
         mantrasBtn.setOnClickListener {
             scope.launch {
                 commonResultTV.visibility = View.VISIBLE
@@ -70,5 +74,5 @@ class MainActivity : AppCompatActivity() {
         commonResultTV?.text = message
     }
 
-    private fun requiredTask(): ITask = TaskString()
+    private fun requiredTask(): ITask = TaskPower()
 }
