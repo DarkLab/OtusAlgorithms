@@ -1,6 +1,9 @@
 package com.darklab.android.otusalgorithms.tasks
 
 class TaskTickets : ITask {
+    override val rootPath: String
+        get() = "tasktickets"
+
     override fun run(data: Array<String>): String = data.first().toInt().let { halfDigit ->
         numberOfTickets(halfDigit)
     }.toString()

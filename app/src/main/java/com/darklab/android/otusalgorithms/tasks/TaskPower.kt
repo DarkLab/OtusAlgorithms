@@ -1,6 +1,8 @@
 package com.darklab.android.otusalgorithms.tasks
 
 class TaskPower : ITask {
+    override val rootPath: String
+        get() = "taskpower"
 
     override fun run(data: Array<String>): String {
         var error = ""
@@ -12,7 +14,7 @@ class TaskPower : ITask {
         }
         if (number == null || power == null) return error
 
-        return binaryDecomposition(number, power)
+        return binaryDecomposition(number, power).toString()
     }
 
     private val byIteration = { number: Double, power: Long ->
@@ -20,7 +22,7 @@ class TaskPower : ITask {
         for (i in 1..power) {
             result *= number
         }
-        result.toString()
+        result
     }
 
     private val powerOfTwo = { number: Double, power: Long ->
@@ -37,7 +39,7 @@ class TaskPower : ITask {
                 count += 1
             } while (count < power)
         }
-        result.toString()
+        result
     }
 
     private val binaryDecomposition = { number: Double, power: Long ->
@@ -52,6 +54,6 @@ class TaskPower : ITask {
             }
             acc *= acc
         }
-        result.toString()
+        result
     }
 }
