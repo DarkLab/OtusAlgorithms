@@ -3,18 +3,17 @@ package com.darklab.android.otusalgorithms
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.darklab.android.otusalgorithms.tasks.ITask
-import com.darklab.android.otusalgorithms.tasks.TaskMantras
-import com.darklab.android.otusalgorithms.tasks.TaskPower
-import com.darklab.android.otusalgorithms.tasks.TaskString
+import com.darklab.android.otusalgorithms.tasks.*
 import com.darklab.android.otusalgorithms.test.Tester
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main)
     private val commonResultTV by lazy { findViewById<TextView>(R.id.commonResultTV) }
+    private val scrollContainer by lazy { findViewById<ScrollView>(R.id.scrollContainer) }
     private val mantrasTextView by lazy { findViewById<TextView>(R.id.mantrasTextView) }
     private val mantrasBtn by lazy { findViewById<Button>(R.id.mantrasBtn) }
 
@@ -27,13 +26,12 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         val task = requiredTask()
-        val rootPath = task.javaClass.simpleName.lowercase()
 
         scope.launch {
             printCurrentState(getString(R.string.processing))
             delay(1000)
             val result = withContext(Dispatchers.Default) {
-                Tester(task, rootPath, assets).runTests()
+                Tester(task, assets).runTests()
             }
 
             printCurrentState(result)
@@ -45,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun playWithMantras() {
         mantrasBtn.setOnClickListener {
             scope.launch {
-                commonResultTV.visibility = View.VISIBLE
+                scrollContainer.visibility = View.VISIBLE
                 mantrasTextView.visibility = View.GONE
                 printCurrentState(getString(R.string.processing))
                 delay(1000)
@@ -54,11 +52,10 @@ class MainActivity : AppCompatActivity() {
                 val result = withContext(Dispatchers.Default) {
                     Tester(
                         t,
-                        t.javaClass.simpleName.lowercase(),
                         assets
                     ).runTests()
                 }
-                commonResultTV.visibility = View.GONE
+                scrollContainer.visibility = View.GONE
                 mantrasTextView.text = result
                 mantrasTextView.visibility = View.VISIBLE
             }
@@ -74,5 +71,5 @@ class MainActivity : AppCompatActivity() {
         commonResultTV?.text = message
     }
 
-    private fun requiredTask(): ITask = TaskPower()
+    private fun requiredTask(): ITask = TaskSortedHeap()
 }
