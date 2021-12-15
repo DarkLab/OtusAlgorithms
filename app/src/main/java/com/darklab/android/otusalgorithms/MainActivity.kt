@@ -6,10 +6,15 @@ import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.darklab.android.otusalgorithms.tasks.*
+import com.darklab.android.otusalgorithms.tasks.ITask
+import com.darklab.android.otusalgorithms.tasks.TaskMantras
+import com.darklab.android.otusalgorithms.tasks.TaskSortedHeap
 import com.darklab.android.otusalgorithms.test.Tester
 import kotlinx.coroutines.*
 
+/**
+ * Для выполнения любой задачи необходимо заменить возвращаемую задачу в [requiredTask]
+ */
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main)
     private val commonResultTV by lazy { findViewById<TextView>(R.id.commonResultTV) }

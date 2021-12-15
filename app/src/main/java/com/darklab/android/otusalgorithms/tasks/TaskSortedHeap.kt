@@ -1,6 +1,8 @@
 package com.darklab.android.otusalgorithms.tasks
 
 import android.util.Log
+import java.util.*
+import kotlin.collections.HashMap
 
 class TaskSortedHeap : ITask {
     override val rootPath: String
@@ -11,27 +13,22 @@ class TaskSortedHeap : ITask {
             it.toInt()
         }.toIntArray()
         (1..15).toList().toIntArray().also {
-            Log.d("=====", "array: ${it.toIntString()}")
+            Log.d("=====", "array: ${it.joinToString()}")
         }.let {
-            SortedHeap().from(it)
+            SortedHeap(it)
         }.also {
-            Log.d("=====", "result: ${it.toArray().toIntString()}")
+            Log.d("=====", "result: ${it.toArray().joinToString()}")
         }
         return "OK"
     }
 }
 
-fun IntArray.toIntString(): String {
-    return joinToString()
-}
-
-class SortedHeap {
+class SortedHeap(elements: IntArray) {
     private var _array: IntArray = IntArray(0)
 
-    fun from(elements: IntArray): SortedHeap {
+    init {
         _array = elements
         heapify()
-        return this
     }
 
     fun toArray(): IntArray {
@@ -40,13 +37,12 @@ class SortedHeap {
 
     private fun heapify() {
         val n = _array.lastIndex
-        var i = (n - 1) / 2
+        val i = (n - 1) / 2
 
-        while (i >= 0) {
-            findMaxIndexWithRoot(i).takeIf { it != i }?.also { maxIndex ->
-                swap(i, maxIndex)
+        for (k in i downTo 0) {
+            findMaxIndexWithRoot(k).takeIf { it != k }?.also { maxIndex ->
+                swap(k, maxIndex)
             }
-            i--
         }
     }
 
