@@ -6,75 +6,72 @@ import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.darklab.android.otusalgorithms.tasks.ITask
-import com.darklab.android.otusalgorithms.tasks.TaskMantras
-import com.darklab.android.otusalgorithms.tasks.TaskSortedHeap
-import com.darklab.android.otusalgorithms.test.Tester
-import kotlinx.coroutines.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-/**
- * Для выполнения любой задачи необходимо заменить возвращаемую задачу в [requiredTask]
- */
 class MainActivity : AppCompatActivity() {
-    private val scope = CoroutineScope(Dispatchers.Main)
+    @Inject
+    lateinit var viewModel: CurrentTaskViewModel
     private val commonResultTV by lazy { findViewById<TextView>(R.id.commonResultTV) }
-    private val scrollContainer by lazy { findViewById<ScrollView>(R.id.scrollContainer) }
-    private val mantrasTextView by lazy { findViewById<TextView>(R.id.mantrasTextView) }
+    private val mantrasTV by lazy { findViewById<TextView>(R.id.mantrasTextView) }
     private val mantrasBtn by lazy { findViewById<Button>(R.id.mantrasBtn) }
+    private val scrollContainer by lazy { findViewById<ScrollView>(R.id.scrollContainer) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as OtusApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
 
-    override fun onResume() {
-        super.onResume()
-
-        val task = requiredTask()
-
-        scope.launch {
-            printCurrentState(getString(R.string.processing))
-            delay(1000)
-            val result = withContext(Dispatchers.Default) {
-                Tester(task, assets).runTests()
-            }
-
-            printCurrentState(result)
-        }
-
-        playWithMantras()
-    }
-
-    private fun playWithMantras() {
-        mantrasBtn.setOnClickListener {
-            scope.launch {
-                scrollContainer.visibility = View.VISIBLE
-                mantrasTextView.visibility = View.GONE
-                printCurrentState(getString(R.string.processing))
-                delay(1000)
-
-                val t = TaskMantras()
-                val result = withContext(Dispatchers.Default) {
-                    Tester(
-                        t,
-                        assets
-                    ).runTests()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is UIState.CurrentTaskState -> {
+                            printCurrentTaskState(state.result)
+                        }
+                        is UIState.MantrasState -> {
+                            printMantrasState(state.message)
+                        }
+                    }
                 }
-                scrollContainer.visibility = View.GONE
-                mantrasTextView.text = result
-                mantrasTextView.visibility = View.VISIBLE
             }
+        }
+
+        initializeListeners()
+
+    }
+
+    private fun initializeListeners() {
+        commonResultTV.setOnClickListener {
+            viewModel.onEvent(UIEvent.NEXT_TASK)
+        }
+
+        mantrasBtn.setOnClickListener {
+            viewModel.onEvent(UIEvent.NEXT_MANTRAS)
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        scope.cancel()
+    private fun printCurrentTaskState(result: String) {
+        mantrasTV.gone()
+        commonResultTV.text = result
+        scrollContainer.visible()
     }
 
-    private fun printCurrentState(message: String) {
-        commonResultTV?.text = message
+    private fun printMantrasState(message: String) {
+        scrollContainer.gone()
+        mantrasTV.text = message
+        mantrasTV.visible()
     }
+}
 
-    private fun requiredTask(): ITask = TaskSortedHeap()
+private fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+private fun View.gone() {
+    visibility = View.GONE
 }
