@@ -1,8 +1,6 @@
 package com.darklab.android.otusalgorithms.tasks
 
 import android.util.Log
-import java.util.*
-import kotlin.collections.HashMap
 
 class TaskSortedHeap : ITask {
     override val rootPath: String
