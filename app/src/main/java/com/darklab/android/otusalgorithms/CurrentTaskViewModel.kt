@@ -3,8 +3,6 @@ package com.darklab.android.otusalgorithms
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.darklab.android.otusalgorithms.tasks.ITask
-import com.darklab.android.otusalgorithms.tasks.TaskHashtable
 import com.darklab.android.otusalgorithms.tasks.TaskMantras
 import com.darklab.android.otusalgorithms.test.Tester
 import kotlinx.coroutines.Dispatchers
@@ -25,15 +23,16 @@ enum class UIEvent {
 }
 
 @Singleton
-class CurrentTaskViewModel @Inject constructor(private val context: Application) : ViewModel() {
+class CurrentTaskViewModel @Inject constructor(
+    private val context: Application,
+    private val taskRepository: TaskRepository
+) : ViewModel() {
 
     private val defaultString = "Task Result"
     private val stringProcessing = context.getString(R.string.processing)
 
     private val _uiState = MutableStateFlow<UIState>(UIState.CurrentTaskState(defaultString))
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
-
-    private val requiredTask: ITask = TaskHashtable()
 
     fun onEvent(event: UIEvent) {
         when (event) {
@@ -49,7 +48,7 @@ class CurrentTaskViewModel @Inject constructor(private val context: Application)
             delay(START_DELAY)
             val result = withContext(Dispatchers.Default) {
                 Tester(
-                    requiredTask,
+                    taskRepository.requiredTask,
                     context.assets
                 ).runTests()
             }

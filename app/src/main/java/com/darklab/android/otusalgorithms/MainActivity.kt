@@ -47,12 +47,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeListeners() {
         commonResultTV.setOnClickListener {
-            viewModel.onEvent(UIEvent.NEXT_TASK)
+            sendEvent(UIEvent.NEXT_TASK)
         }
 
         mantrasBtn.setOnClickListener {
-            viewModel.onEvent(UIEvent.NEXT_MANTRAS)
+            sendEvent(UIEvent.NEXT_MANTRAS)
         }
+    }
+
+    private fun sendEvent(event: UIEvent) {
+        viewModel.onEvent(event)
     }
 
     private fun printCurrentTaskState(result: String) {
