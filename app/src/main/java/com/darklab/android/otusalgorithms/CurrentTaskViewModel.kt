@@ -48,27 +48,25 @@ class CurrentTaskViewModel @Inject constructor(
         _uiState.emit(UIState.CurrentTaskState(stringProcessing))
 
         delay(START_DELAY)
-        val result = withContext(Dispatchers.Default) {
+        withContext(Dispatchers.Default) {
             Tester(
                 taskRepository.requiredTask,
                 assetsProvider
             ).runTests()
-        }
-
-        _uiState.emit(UIState.CurrentTaskState(result))
+        }.also {
+        _uiState.emit(UIState.CurrentTaskState(it))
     }
 
     private suspend fun newMantras() {
         _uiState.emit(UIState.CurrentTaskState(stringProcessing))
 
         delay(START_DELAY)
-        val result = withContext(Dispatchers.Default) {
+        withContext(Dispatchers.Default) {
             Tester(
                 TaskMantras(),
                 assetsProvider
             ).runTests()
-        }
-
-        _uiState.emit(UIState.MantrasState(result))
+        }.also {
+        _uiState.emit(UIState.MantrasState(it))
     }
 }
