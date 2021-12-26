@@ -1,7 +1,5 @@
 package com.darklab.android.otusalgorithms.tasks
 
-import kotlin.random.Random
-
 private const val BALL = "︎⚽︎"
 private const val POINT = "・"
 
@@ -14,8 +12,8 @@ class TaskMantras : ITask {
     }
 
     private fun sayRandomMantra(): String {
-        val n = Random(System.currentTimeMillis()).nextInt(14)
-        return sayMantra(n)
+        val random = (System.currentTimeMillis() % 100).toInt() % 14
+        return sayMantra(random)
     }
 
     private fun sayMantra(n: Int): String {
