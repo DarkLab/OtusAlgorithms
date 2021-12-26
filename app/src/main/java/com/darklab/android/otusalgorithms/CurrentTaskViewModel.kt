@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.darklab.android.otusalgorithms.tasks.TaskMantras
 import com.darklab.android.otusalgorithms.test.Tester
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,10 +28,14 @@ class CurrentTaskViewModel @Inject constructor(
     private val defaultString = resourcesProvider.getString(R.string.default_result)
     private val stringProcessing = resourcesProvider.getString(R.string.processing)
 
+    private val lastJob: Job? = null
+
     private val _uiState = MutableStateFlow<UIState>(UIState.CurrentTaskState(defaultString))
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     fun onEvent(event: UIEvent) {
+        if (lastJob?.isActive == true) return
+
         viewModelScope.launch {
             when (event) {
                 UIEvent.NEXT_TASK -> performCurrentTask()
