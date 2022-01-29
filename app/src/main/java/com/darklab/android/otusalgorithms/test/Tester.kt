@@ -1,7 +1,7 @@
 package com.darklab.android.otusalgorithms.test
 
-import com.darklab.android.otusalgorithms.AssetsProvider
 import com.darklab.android.otusalgorithms.tasks.ITask
+import com.darklab.android.otusalgorithms.AssetsProvider
 
 private const val TASK_BITS = "taskbits"
 private val TASK_BITS_SUBTASK = arrayOf(

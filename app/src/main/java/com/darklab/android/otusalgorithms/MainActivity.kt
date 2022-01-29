@@ -2,29 +2,39 @@ package com.darklab.android.otusalgorithms
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ScrollView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.darklab.android.otusalgorithms.databinding.ActivityMainBinding
+import com.darklab.android.otusalgorithms.di.MainViewComponent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mainViewComponent: MainViewComponent
+
     @Inject
-    lateinit var viewModel: CurrentTaskViewModel
-    private val commonResultTV by lazy { findViewById<TextView>(R.id.commonResultTV) }
-    private val mantrasTV by lazy { findViewById<TextView>(R.id.mantrasTextView) }
-    private val mantrasBtn by lazy { findViewById<Button>(R.id.mantrasBtn) }
-    private val scrollContainer by lazy { findViewById<ScrollView>(R.id.scrollContainer) }
+    lateinit var viewModelFactory: GenericViewModelFactory<CurrentTaskViewModel>
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[CurrentTaskViewModel::class.java]
+    }
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (applicationContext as OtusApplication).appComponent.inject(this)
+        mainViewComponent = (applicationContext as OtusApplication)
+            .appComponent
+            .mainViewComponent()
+            .create()
+        mainViewComponent.inject(this)
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -46,11 +56,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeListeners() {
-        commonResultTV.setOnClickListener {
+        binding.commonResultTV.setOnClickListener {
             sendEvent(UIEvent.NEXT_TASK)
         }
 
-        mantrasBtn.setOnClickListener {
+        binding.mantrasBtn.setOnClickListener {
             sendEvent(UIEvent.NEXT_MANTRAS)
         }
     }
@@ -60,15 +70,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun printCurrentTaskState(result: String) {
-        mantrasTV.gone()
-        commonResultTV.text = result
-        scrollContainer.visible()
+        binding.mantrasTextView.gone()
+        binding.commonResultTV.text = result
+        binding.scrollContainer.visible()
     }
 
     private fun printMantrasState(message: String) {
-        scrollContainer.gone()
-        mantrasTV.text = message
-        mantrasTV.visible()
+        binding.scrollContainer.gone()
+        binding.mantrasTextView.text = message
+        binding.mantrasTextView.visible()
     }
 }
 
