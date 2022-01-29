@@ -1,7 +1,7 @@
 package com.darklab.android.otusalgorithms.test
 
-import android.content.res.AssetManager
 import com.darklab.android.otusalgorithms.tasks.ITask
+import com.darklab.android.otusalgorithms.AssetsProvider
 
 private const val TASK_BITS = "taskbits"
 private val TASK_BITS_SUBTASK = arrayOf(
@@ -14,7 +14,7 @@ private val TASK_BITS_SUBTASK = arrayOf(
 
 class Tester(
     private val task: ITask,
-    private val assets: AssetManager
+    private val assetsProvider: AssetsProvider
 ) {
 
     fun runTests(): String {
@@ -36,7 +36,7 @@ class Tester(
         stringBuilder: StringBuilder
     ) {
         var nr = 0
-        val files = assets.list(rootPath) ?: return
+        val files = assetsProvider.getAllAssetsIn(rootPath) ?: return
         while (true) {
             val inFile = "test.$nr.in"
             val outFile = "test.$nr.out"
@@ -51,12 +51,8 @@ class Tester(
     }
 
     private fun runTest(inFile: String, outFile: String): TestResult {
-        val data = assets.open(inFile).bufferedReader().use {
-            it.readLines().toTypedArray()
-        }
-        val expect = assets.open(outFile).bufferedReader().use {
-            it.readText().trim()
-        }
+        val data = assetsProvider.getFileContent(inFile)
+        val expect = assetsProvider.readResultFrom(outFile)
         val startTime = System.currentTimeMillis()
         val actual = task.run(data).trim()
         val endTime = System.currentTimeMillis()

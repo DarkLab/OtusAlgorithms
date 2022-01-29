@@ -1,6 +1,5 @@
 package com.darklab.android.otusalgorithms
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.darklab.android.otusalgorithms.tasks.TaskMantras
@@ -24,12 +23,13 @@ enum class UIEvent {
 
 @Singleton
 class CurrentTaskViewModel @Inject constructor(
-    private val context: Application,
+    private val resourcesProvider: ResourcesProvider,
+    private val assetsProvider: AssetsProvider,
     private val taskRepository: TaskRepository
 ) : ViewModel() {
 
     private val defaultString = "Task Result"
-    private val stringProcessing = context.getString(R.string.processing)
+    private val stringProcessing = resourcesProvider.getString(R.string.processing)
 
     private val _uiState = MutableStateFlow<UIState>(UIState.CurrentTaskState(defaultString))
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -49,7 +49,7 @@ class CurrentTaskViewModel @Inject constructor(
             val result = withContext(Dispatchers.Default) {
                 Tester(
                     taskRepository.requiredTask,
-                    context.assets
+                    assetsProvider
                 ).runTests()
             }
 
@@ -65,7 +65,7 @@ class CurrentTaskViewModel @Inject constructor(
             val result = withContext(Dispatchers.Default) {
                 Tester(
                     TaskMantras(),
-                    context.assets
+                    assetsProvider = assetsProvider
                 ).runTests()
             }
 
