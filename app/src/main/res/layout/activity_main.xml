@@ -13,8 +13,20 @@
         android:layout_margin="8dp"
         android:text="@string/random_mantra"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/performTaskBtn"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/performTaskBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="8dp"
+        android:text="@string/task"
+        app:layout_constraintBottom_toBottomOf="@id/mantrasBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mantrasBtn"
+        app:layout_constraintTop_toTopOf="@id/mantrasBtn" />
 
     <TextView
         android:id="@+id/mantrasTextView"

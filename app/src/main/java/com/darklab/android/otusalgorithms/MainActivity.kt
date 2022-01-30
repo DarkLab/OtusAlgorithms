@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeListeners() {
-        binding.commonResultTV.setOnClickListener {
+        binding.performTaskBtn.setOnClickListener {
             sendEvent(UIEvent.NEXT_TASK)
         }
 

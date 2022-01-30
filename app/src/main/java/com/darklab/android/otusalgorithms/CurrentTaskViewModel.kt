@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.darklab.android.otusalgorithms.tasks.TaskMantras
 import com.darklab.android.otusalgorithms.test.Tester
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,42 +31,44 @@ class CurrentTaskViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UIState>(UIState.CurrentTaskState(defaultString))
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
+    private var lastJob: Job? = null
+
     fun onEvent(event: UIEvent) {
-        when (event) {
-            UIEvent.NEXT_TASK -> performCurrentTask()
-            UIEvent.NEXT_MANTRAS -> newMantras()
+        if (lastJob?.isActive == true) return
+
+        lastJob = viewModelScope.launch {
+            when (event) {
+                UIEvent.NEXT_TASK -> performCurrentTask()
+                UIEvent.NEXT_MANTRAS -> newMantras()
+            }
         }
     }
 
-    private fun performCurrentTask() {
-        viewModelScope.launch {
-            _uiState.emit(UIState.CurrentTaskState(stringProcessing))
+    private suspend fun performCurrentTask() {
+        _uiState.emit(UIState.CurrentTaskState(stringProcessing))
 
-            delay(START_DELAY)
-            val result = withContext(Dispatchers.Default) {
-                Tester(
-                    taskRepository.requiredTask,
-                    assetsProvider
-                ).runTests()
-            }
-
-            _uiState.emit(UIState.CurrentTaskState(result))
+        delay(START_DELAY)
+        val result = withContext(Dispatchers.Default) {
+            Tester(
+                taskRepository.requiredTask,
+                assetsProvider
+            ).runTests()
         }
+
+        _uiState.emit(UIState.CurrentTaskState(result))
     }
 
-    private fun newMantras() {
-        viewModelScope.launch {
-            _uiState.emit(UIState.CurrentTaskState(stringProcessing))
+    private suspend fun newMantras() {
+        _uiState.emit(UIState.CurrentTaskState(stringProcessing))
 
-            delay(START_DELAY)
-            val result = withContext(Dispatchers.Default) {
-                Tester(
-                    TaskMantras(),
-                    assetsProvider = assetsProvider
-                ).runTests()
-            }
-
-            _uiState.emit(UIState.MantrasState(result))
+        delay(START_DELAY)
+        val result = withContext(Dispatchers.Default) {
+            Tester(
+                TaskMantras(),
+                assetsProvider = assetsProvider
+            ).runTests()
         }
+
+        _uiState.emit(UIState.MantrasState(result))
     }
 }

@@ -3,4 +3,5 @@
     <string name="processing" tools:ignore="TypographyEllipsis">Processing...</string>
     <string name="random_mantra">Случайное Заклинание</string>
     <string name="default_result">Task Result</string>
+    <string name="task">Задача</string>
 </resources>
